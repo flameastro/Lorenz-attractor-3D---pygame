@@ -25,14 +25,16 @@ colors = []
 scale = 15
 angle = 0
 previous = None
+can_draw = False
 
 def hsv2rgb(h,s,v):
     return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
-can_draw = False
+
 run = True
 while run:
     screen.fill(black)
     clock.tick(fps)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -51,6 +53,7 @@ while run:
     rotation_z =[[math.cos(angle), -math.sin(angle), 0],
                  [math.sin(angle), math.cos(angle), 0 ],
                   [0, 0, 1]]
+
     time = 0.009
     dx = (sigma * (y - x))*time
     dy = (x * (row - z) - y)*time
@@ -63,12 +66,12 @@ while run:
 
     point = [[x], [y], [z]]
     points.append(point)
-    for p in range(len(points)):
 
+    for p in range(len(points)):
         rotated_2d = matrix_multiplication(rotation_y, points[p])
         distance = 5
 
-        val = 1/(distance - rotated_2d[2][0])#z value
+        val = 1/(distance - rotated_2d[2][0])  # z value
         projection_matrix = [[1, 0, 0],
                              [0, 1, 0]]
 
@@ -77,17 +80,16 @@ while run:
         y_pos = int(projected2d[1][0] * scale) + height//2
         if hue > 1:
             hue = 0
-        #pygame.draw.circle(screen, (hsv2rgb(hue, 1, 1)) , (x_pos, y_pos), 3)
+        # pygame.draw.circle(screen, (hsv2rgb(hue, 1, 1)) , (x_pos, y_pos), 3)
         if previous is not None:
             if hue >  0.006:
                 pygame.draw.line(screen, (hsv2rgb(hue, 1, 1)), (x_pos, y_pos), previous, 4 )
 
-
         previous = (x_pos, y_pos)
         hue +=0.006
-
 
     angle += 0.01
 
     pygame.display.update()
+
 pygame.quit()
